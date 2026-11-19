@@ -1,6 +1,7 @@
 
 public class QueueArrayBased implements QueueInterface {
-  private final int MAX_QUEUE = 50; // maximum size of queue
+  //Changed to larger number for the maze
+  private final int MAX_QUEUE = 10000; // maximum size of queue
   private Object[] items;
   private int front, back, count;
   
