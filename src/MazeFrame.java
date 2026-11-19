@@ -13,7 +13,7 @@ public class MazeFrame extends JFrame{
 
       //Adding tests here, adapted from lectures with adaption for getter setter method
         //Test 1, Open 2x2 room
-        //Heres adapted code for get/set
+        //Heres my adapted code for get/set
        // grid[4][4].setTop(false);
         //grid[3][4].setBottom(false);
         //grid[4][4].setLeft(false);
@@ -81,6 +81,58 @@ for(int i =0; i<grid.length; i++){
             b.setTop(false);
         }
 
+    }
+    //Using ListArrayBased to return a list of the neighbours of c the builder hasnt visited yet
+    //Based on the code in SPA example video
+    private ListArrayBased getUnvisitedNeighbours(Cell c){
+        //Exact same as lab 1
+        ListArrayBased neighbours = new ListArrayBased();
+        int row = c.getRow();
+        int col = c.getCol();
+
+        //Another case of a minor adjustment for my get/set approach, logic still the same as SPA example
+        if (col > 0 && !grid[row][col-1].getVisited())
+            neighbours.add(neighbours.size()+1, grid[row][col-1]);
+        if (row > 0 && !grid[row-1][col].getVisited())
+            neighbours.add(neighbours.size()+1, grid[row-1][col]);
+        if (col < grid[0].length-1 && !grid[row][col+1].getVisited())
+            neighbours.add(neighbours.size()+1, grid[row][col+1]);
+        if (row < grid.length-1 && !grid[row+1][col].getVisited())   // from c.row < grid.length-1 && ... code
+            neighbours.add(neighbours.size()+1, grid[row+1][col]);
+
+        return neighbours;
+
+    }
+
+    //Now to actually build the maze, using depth-first search
+    //Found reusing lab 3 work and logic from an example on lecture 6 worked best
+    private void generateMazeRandomiseDFS(int start_row, int start_col){
+     StackReferenceBased stack = new StackReferenceBased();
+     Cell start = grid[start_row][start_col];
+     start.setVisited(true);
+     stack.push(start);
+     //Needed counter for next check
+     int wallsKnocked = 0;
+     while (!stack.isEmpty()){//Vertex top of stack
+         Cell current = (Cell) stack.peek();
+         ListArrayBased neighbours = getUnvisitedNeighbours(current);
+
+         if (neighbours.isEmpty()){
+             stack.pop();
+         }
+         //Pick at random rather than smallest label like in example
+         else{
+             int pick = (int)(Math.random() * neighbours.size()) + 1;// Llist starts at 1
+
+             Cell next = (Cell) neighbours.get(pick);
+             //Open passage between
+             knockDownWall(current, next);
+             wallsKnocked++;
+             next.setVisited(true); //mark u as visited, s.push(u) in lecture
+             stack.push(next);
+
+         }
+     }
     }
     public static void main(String[] args){
         new MazeFrame().setVisible(true);
