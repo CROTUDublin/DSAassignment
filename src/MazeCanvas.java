@@ -6,6 +6,7 @@ import java.awt.Graphics;
 
 public class MazeCanvas extends JPanel{
     Cell [][] grid;
+    Cell current; //Based on lecture 6
     public MazeCanvas(Cell [][] grid_arg)
     {
         grid = grid_arg;
@@ -15,10 +16,20 @@ public class MazeCanvas extends JPanel{
        //Slightly different from notes as im using getters and setters
         //New addition to mark cells on winning route
         top=top+1;//For future reference
-        if (c.getTruePath()){
-            g.setColor(Color.GREEN);
+
+        //Changed from c.getTruePath for visual states. Using the logic found in the HouseCanvas example
+        //Im using colors also from HouseCanvas and some presets
+        if (c == current)//To meet actively explored requirement
+            g.setColor(Color.RED);
+            else if (c.getTruePath())
+                g.setColor(new Color(34, 139, 34));
+            else if (c.getExplored())
+                g.setColor(new Color(135, 206, 235));
+            else if (c.getVisited())
+                g.setColor(Color.WHITE);
+            else g.setColor(Color.DARK_GRAY);
             g.fillRect(left, top, cell_dim, cell_dim);
-        }
+
         g.setColor(Color.BLACK);
 
         if (c.getTop())
@@ -33,6 +44,8 @@ public class MazeCanvas extends JPanel{
     @Override
     //JPanel uses protected paintComponent
     protected void paintComponent (Graphics g) {
+        //Added for live animation, clears last frame
+        super.paintComponent(g);
         int w = getWidth();
         int h = getHeight();
 //Size of cell on screen

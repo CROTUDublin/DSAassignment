@@ -4,14 +4,17 @@ public class MazeFrame extends JFrame{
 
     int M = 10; int N = 10;
     Cell [][] grid = new Cell [M][N];
+    //Added later for variables per brief for the canvas and a delay
+    MazeCanvas canvas;
+    int delay = 20;
 
     public MazeFrame(){
       setTitle("My Perfect Maze!");
       setSize(600, 600);
       setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       initialiseGrid();
-      generateMazeRandomiseDFS(0,0);
-      solveMazeBFS(0,0,M-1,N-1);
+      //generateMazeRandomiseDFS(0,0);
+      //solveMazeBFS(0,0,M-1,N-1);
 
       //Adding tests here, adapted from lectures with adaption for getter setter method
         //Test 1, Open 2x2 room
@@ -29,7 +32,11 @@ public class MazeFrame extends JFrame{
         //Test 2: remove every wall with only border
         //tearDownAllWalls(); commented out from lecture notes
 
-        add (new MazeCanvas(grid));
+        //add (new MazeCanvas(grid));
+        //Needed to change as pause needs to talk to the canvas
+        //Now a reference for the canvas is kept
+        canvas = new MazeCanvas(grid);
+        add(canvas);
 
     }
     private void initialiseGrid()
@@ -42,6 +49,24 @@ public class MazeFrame extends JFrame{
             }
         }
     }
+//Needed pause method, using repaint and sleep as most basic approach
+    //Simply redraws woth c as the current cell so the user can watch
+    //Try/catch based on my lab 3
+    private void pause (Cell c){
+        canvas.current = c;
+        canvas.repaint();
+        try {
+
+                Thread.sleep(delay);
+
+        }
+        catch (InterruptedException e){
+
+        }
+    }
+
+
+
     //Knocking down the wall shared by two neighbours, both sides
     //Adapted from the SPA grid based checks, left, top, right, bottom
     //Again, code adjusted for my getter setter approach for both methods but logic is the same as grid[c.row][c.col-1], was c.col > 0etc
@@ -117,6 +142,8 @@ for(int i =0; i<grid.length; i++){
      int wallsKnocked = 0;
      while (!stack.isEmpty()){//Vertex top of stack
          Cell current = (Cell) stack.peek();
+         //Added later using the pause method and the DFS trace from lecture 6
+         pause(current);
          ListArrayBased neighbours = getUnvisitedNeighbours(current);
 
          if (neighbours.isEmpty()){
@@ -155,6 +182,8 @@ for(int i =0; i<grid.length; i++){
         //Get/set again adapted for
        while (!q.isEmpty()){
            Cell c = (Cell)q.dequeue();
+           //Added later, animation
+           pause(c);
            //Im marking cells when enqueued like lecture 6
 
            if (c.getCol() > 0 && !grid[c.getRow()][c.getCol()-1].getExplored() && !c.getLeft())
@@ -191,7 +220,8 @@ for(int i =0; i<grid.length; i++){
        }
 
 displaySP(parentTracker, startNode, endNode, "BFS shortest path");
-
+       //Added later, clear highlight and show the final path
+pause(null);
     }
     //Lecture displaySP with added marks for exits and specific cells
     private void displaySP(int [] parentTracker, int startNode, int endNode, String info){
@@ -210,6 +240,10 @@ displaySP(parentTracker, startNode, endNode, "BFS shortest path");
       System.out.println();
     }
     public static void main(String[] args){
-        new MazeFrame().setVisible(true);
+        //Changed from new MazeFrame().set... for animation
+        MazeFrame frame = new MazeFrame();
+        frame.setVisible(true);
+        frame.generateMazeRandomiseDFS(0, 0);
+        frame.solveMazeBFS(0,0,frame.M-1,frame.N-1);
     }
 }
