@@ -13,8 +13,14 @@ public class MazeCanvas extends JPanel{
 
     private void drawCell(Graphics g, Cell c, int left, int top, int cell_dim){
        //Slightly different from notes as im using getters and setters
-        g.setColor(Color.BLACK);
+        //New addition to mark cells on winning route
         top=top+1;//For future reference
+        if (c.getTruePath()){
+            g.setColor(Color.GREEN);
+            g.fillRect(left, top, cell_dim, cell_dim);
+        }
+        g.setColor(Color.BLACK);
+
         if (c.getTop())
             g.drawLine(left,top,left+cell_dim,top);
         if (c.getLeft())

@@ -10,6 +10,8 @@ public class MazeFrame extends JFrame{
       setSize(600, 600);
       setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       initialiseGrid();
+      generateMazeRandomiseDFS(0,0);
+      solveMazeBFS(0,0,M-1,N-1);
 
       //Adding tests here, adapted from lectures with adaption for getter setter method
         //Test 1, Open 2x2 room
@@ -120,7 +122,7 @@ for(int i =0; i<grid.length; i++){
          if (neighbours.isEmpty()){
              stack.pop();
          }
-         //Pick at random rather than smallest label like in example
+         //Pick at random rather than smallest label like in lecture
          else{
              int pick = (int)(Math.random() * neighbours.size()) + 1;// Llist starts at 1
 
@@ -133,6 +135,79 @@ for(int i =0; i<grid.length; i++){
 
          }
      }
+    }
+    //The solver for shortest path from start row/col to end row/col
+    //Based labwork for Queues, the video demo for DijkstrasSPA and logic from lecture 6
+    private void solveMazeBFS(int start_row, int start_col, int end_row, int end_col){
+        int startNode = start_row*grid[0].length+start_col;
+        int endNode = end_row*grid[0].length+end_col;
+
+        int [] parentTracker = new int[grid.length*grid[0].length];
+       for (int i=0;i<parentTracker.length;i++){
+           parentTracker[i] = startNode;
+       }
+       //Lecture 6 and lab 4 queue
+       QueueArrayBased q = new QueueArrayBased();
+       grid[start_row][start_col].setExplored(true);
+       q.enqueue(grid[start_row][start_col]);
+
+       //While loop from Dijkstra video used to do Lectrue 6 logic
+        //Get/set again adapted for
+       while (!q.isEmpty()){
+           Cell c = (Cell)q.dequeue();
+           //Im marking cells when enqueued like lecture 6
+
+           if (c.getCol() > 0 && !grid[c.getRow()][c.getCol()-1].getExplored() && !c.getLeft())
+           {
+               Cell cLeft = grid[c.getRow()][c.getCol()-1];
+               parentTracker[cLeft.getVertexNum()] = c.getVertexNum();
+               cLeft.setExplored(true);
+               q.enqueue(cLeft);
+           }
+
+           if (c.getRow() > 0 && !grid[c.getRow()-1][c.getCol()].getExplored() && !c.getTop())
+           {
+               Cell cTop = grid[c.getRow()-1][c.getCol()];
+               parentTracker[cTop.getVertexNum()] = c.getVertexNum();
+               cTop.setExplored(true);
+               q.enqueue(cTop);
+           }
+
+           if (c.getCol() < grid[0].length-1 && !grid[c.getRow()][c.getCol()+1].getExplored() && !c.getRight())
+           {
+               Cell cRight = grid[c.getRow()][c.getCol()+1];
+               parentTracker[cRight.getVertexNum()] = c.getVertexNum();
+               cRight.setExplored(true);
+               q.enqueue(cRight);
+           }
+
+           if (c.getRow() < grid.length-1 && !grid[c.getRow()+1][c.getCol()].getExplored() && !c.getBottom())
+           {
+               Cell cBottom = grid[c.getRow()+1][c.getCol()];
+               parentTracker[cBottom.getVertexNum()] = c.getVertexNum();
+               cBottom.setExplored(true);
+               q.enqueue(cBottom);
+           }
+       }
+
+displaySP(parentTracker, startNode, endNode, "BFS shortest path");
+
+    }
+    //Lecture displaySP with added marks for exits and specific cells
+    private void displaySP(int [] parentTracker, int startNode, int endNode, String info){
+      System.out.println();
+      System.out.println(info);
+
+      int index = endNode;
+      System.out.print(index);
+      grid[index / grid[0].length][index % grid[0].length].setTruePath(true);
+      while(index != startNode){
+         //Get back to parent cell
+          index = parentTracker[index];
+          System.out.print("" + index);
+          grid[index / grid[0].length][index % grid[0].length].setTruePath(true);
+      }
+      System.out.println();
     }
     public static void main(String[] args){
         new MazeFrame().setVisible(true);
