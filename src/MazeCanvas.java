@@ -50,8 +50,10 @@ public class MazeCanvas extends JPanel{
         int h = getHeight();
 //Size of cell on screen
         int cell_dim;
-        if (w < h)
-            cell_dim = w / grid.length;
+        //Changed during testing stage for clean scaling
+        //For non square mazes and dividing by columns
+        if (w / grid[0].length < h / grid.length)
+            cell_dim = w / grid[0].length;
         else cell_dim = h / grid.length;
 
         //i = row, j = col
