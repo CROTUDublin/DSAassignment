@@ -1,5 +1,6 @@
 //One square of the maze, foundational
-//Growing out of Lecture notes and examples
+//Growing out of Lecture notes and examples in SPA video
+//Getters and setters used on private fields, only deliberate change
 public class Cell {
     private int row, col, vertexNum;
     private boolean top, bottom, left, right;

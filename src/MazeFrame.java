@@ -1,10 +1,11 @@
-//Adapted from lecture notes and videos
+//Adapted from lecture MazeFrame and SPA video
+//Window for the grid that generates the maze
 import javax.swing.*;
 import java.util.Scanner;
 import java.util.InputMismatchException;
 public class MazeFrame extends JFrame {
 
-    //Changed from static values to being read into the constructor
+    //Changed from static values to being read into the constructor for part A
 
     int M;
     int N;
@@ -13,7 +14,7 @@ public class MazeFrame extends JFrame {
     MazeCanvas canvas;
     int delay;
 
-    //Added parameters for method
+    //Added parameters for choosing size at startup
 //Based on MazeCanvas and TestTreeNode examples
     public MazeFrame(int M_arg, int N_arg, int delay_arg) {
         M = M_arg;
@@ -25,10 +26,10 @@ public class MazeFrame extends JFrame {
         setSize(600, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         initialiseGrid();
-        //generateMazeRandomiseDFS(0,0);
-        //solveMazeBFS(0,0,M-1,N-1);
+
 
         //Adding tests here, adapted from lectures with adaption for getter setter method
+        //Commented out, used for reference
         //Test 1, Open 2x2 room
         //Heres my adapted code for get/set
         // grid[4][4].setTop(false);
@@ -42,7 +43,7 @@ public class MazeFrame extends JFrame {
         // grid[4][3].setTop(false);
 
         //Test 2: remove every wall with only border
-        //tearDownAllWalls(); commented out from lecture notes
+        //tearDownAllWalls();
 
         //add (new MazeCanvas(grid));
         //Needed to change as pause needs to talk to the canvas
@@ -51,7 +52,7 @@ public class MazeFrame extends JFrame {
         add(canvas);
 
     }
-
+//Fill with closed cell, based on lecture initializeGrid
     private void initialiseGrid() {
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[0].length; j++) {
@@ -95,7 +96,8 @@ public class MazeFrame extends JFrame {
         }
     }
 
-    //Inspired by tearDownAllWalls from lecture/lab notes, ease of use
+    //Brief part B for knocking down wall shared by two neighbours
+    //Adapted from SPA video
     private void knockDownWall(Cell a, Cell b) {
         if (b.getCol() == a.getCol() - 1) {
             a.setLeft(false);
@@ -117,7 +119,8 @@ public class MazeFrame extends JFrame {
     }
 
     //Using ListArrayBased to return a list of the neighbours of c the builder hasnt visited yet
-    //Based on the code in SPA example video
+    //Based on the code in SPA example video adjusted for getters/setters
+    //For part A asking for edge handling cleanly
     private ListArrayBased getUnvisitedNeighbours(Cell c) {
         //Exact same as lab 1
         ListArrayBased neighbours = new ListArrayBased();
@@ -178,7 +181,7 @@ public class MazeFrame extends JFrame {
     public void solveMazeBFS(int start_row, int start_col, int end_row, int end_col) {
         int startNode = start_row * grid[0].length + start_col;
         int endNode = end_row * grid[0].length + end_col;
-
+        //Parent pointers for rebuilding the correct path brief part C
         int[] parentTracker = new int[grid.length * grid[0].length];
         for (int i = 0; i < parentTracker.length; i++) {
             parentTracker[i] = startNode;
@@ -226,11 +229,11 @@ public class MazeFrame extends JFrame {
         }
 
         displaySP(parentTracker, startNode, endNode, "BFS shortest path");
-        //Added later, clear highlight and show the final path
+        //Added later, clear highlight and show the final path for brief requirement
         pause(null);
     }
 
-    //Lecture displaySP with added marks for exits and specific cells
+    //Lecture displaySP with added marks for exits and specific cells for winning routes, brief part C
     private void displaySP(int[] parentTracker, int startNode, int endNode, String info) {
         System.out.println();
         System.out.println(info);

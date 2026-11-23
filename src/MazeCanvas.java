@@ -14,7 +14,7 @@ public class MazeCanvas extends JPanel{
 
     private void drawCell(Graphics g, Cell c, int left, int top, int cell_dim){
        //Slightly different from notes as im using getters and setters
-        //New addition to mark cells on winning route
+
         top=top+1;//For future reference
 
         //Changed from c.getTruePath for visual states. Using the logic found in the HouseCanvas example
